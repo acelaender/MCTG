@@ -25,8 +25,8 @@ public class Server {
             while (true) {
                 final Socket clientConnection = serverSocket.accept();
                 final RequestHandler socketHandler = new RequestHandler(clientConnection, router);
+                executorService.submit(socketHandler);
             }
         }
-
     }
 }

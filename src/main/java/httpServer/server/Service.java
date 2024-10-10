@@ -1,4 +1,5 @@
 package httpServer.server;
 
-public class Service {
+public interface Service {
+    Response handleRequest(Request request);
 }
