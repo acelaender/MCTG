@@ -10,7 +10,7 @@ public class User {
         this.password = password;
         this.email = email;
     }
-
+    //TODO: No email!
     public String getUsername() {
         return username;
     }

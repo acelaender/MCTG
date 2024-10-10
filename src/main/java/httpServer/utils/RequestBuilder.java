@@ -36,7 +36,6 @@ public class RequestBuilder {
                 request.setBody(new String(charBuffer));
             }
         }
-
         return request;
     }
 
