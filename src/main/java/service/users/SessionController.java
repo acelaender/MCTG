@@ -6,29 +6,35 @@ import httpServer.http.HttpStatus;
 import httpServer.server.Request;
 import httpServer.server.Response;
 import models.User;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import httpServer.http.ContentType;
+import httpServer.http.HttpStatus;
+import httpServer.server.Request;
+import httpServer.server.Response;
+import models.User;
 import persistance.DummyPersistanceLayer;
 import service.Controller;
 
-public class UsersController extends Controller {
+public class SessionController extends Controller{
     private DummyPersistanceLayer persistenceLayer;
-    public UsersController() {
+    public SessionController() {
         this.persistenceLayer = new DummyPersistanceLayer();
     }
 
-    public Response registerUser(Request request){
+    public Response loginUser(Request request){
         try {
             User user = this.getObjectMapper().readValue(request.getBody(), User.class);
-            if(this.persistenceLayer.registerUser(user)){
+            if(this.persistenceLayer.loginUser(user)){
                 return new Response(
                         HttpStatus.CREATED,
                         ContentType.JSON,
-                        "{ \"message\": \"Success\" }"
+                        "{ \"token\": \"" + user.getUsername() + "-mctgToken\" }"
                 );
             }else {
                 return new Response(
-                        HttpStatus.CONFLICT,
+                        HttpStatus.UNAUTHORIZED,
                         ContentType.JSON,
-                        "{ \"message\": \"User exists!\" }"
+                        "{ \"message\": \"Invalid Username or password!\" }"
                 );
             }
         } catch (JsonProcessingException e){

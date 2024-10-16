@@ -1,14 +1,18 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+
 public class User {
+    @JsonAlias({"Username"})
     private String username;
+    @JsonAlias({"Password"})
     private String password;
     private String email;
 
-    public User(String username, String password, String email) {
+    public User() {}
+    public User(String username, String password) {
         this.username = username;
         this.password = password;
-        this.email = email;
     }
     //TODO: No email!
     public String getUsername() {

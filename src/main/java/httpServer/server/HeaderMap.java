@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HeaderMap {
-    public static final String CONTENT_LENGTH_HEADER = "Content-Lentgth";
+    public static final String CONTENT_LENGTH_HEADER = "Content-Length";
     public static final String HEADER_NAME_VALUE_SEPARATOR = ":";
     private Map<String, String> headers = new HashMap<>();
 
