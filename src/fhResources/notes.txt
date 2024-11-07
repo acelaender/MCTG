@@ -1,0 +1,7 @@
+database user:
+    username: mctg
+    password: mctgproject2024
+
+database tables:
+    users(int id, string username, string password, string bio, blob image, int elo, int wins, int losses, int coins)
+

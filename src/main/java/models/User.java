@@ -7,7 +7,6 @@ public class User {
     private String username;
     @JsonAlias({"Password"})
     private String password;
-    private String email;
 
     public User() {}
     public User(String username, String password) {
