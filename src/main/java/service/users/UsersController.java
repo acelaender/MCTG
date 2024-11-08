@@ -1,6 +1,8 @@
 package service.users;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import dal.UnitOfWork;
+import dal.repositories.UserRepository;
 import httpServer.http.ContentType;
 import httpServer.http.HttpStatus;
 import httpServer.server.Request;
@@ -16,9 +18,10 @@ public class UsersController extends Controller {
     }
 
     public Response registerUser(Request request){
-        try {
+        UnitOfWork unitOfWork = new UnitOfWork();
+        try(unitOfWork) {
             User user = this.getObjectMapper().readValue(request.getBody(), User.class);
-            if(this.persistenceLayer.registerUser(user)){
+            if(new UserRepository(unitOfWork).registerUser(user)){
                 return new Response(
                         HttpStatus.CREATED,
                         ContentType.JSON,
@@ -31,7 +34,7 @@ public class UsersController extends Controller {
                         "{ \"message\": \"User exists!\" }"
                 );
             }
-        } catch (JsonProcessingException e){
+        } catch (Exception e){
             e.printStackTrace();
         }
         return new Response(

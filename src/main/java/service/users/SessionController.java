@@ -1,6 +1,8 @@
 package service.users;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import dal.UnitOfWork;
+import dal.repositories.UserRepository;
 import httpServer.http.ContentType;
 import httpServer.http.HttpStatus;
 import httpServer.server.Request;
@@ -22,9 +24,10 @@ public class SessionController extends Controller{
     }
 
     public Response loginUser(Request request){
-        try {
+        UnitOfWork unitOfWork = new UnitOfWork();
+        try(unitOfWork) {
             User user = this.getObjectMapper().readValue(request.getBody(), User.class);
-            if(this.persistenceLayer.loginUser(user)){
+            if(new UserRepository(unitOfWork).login(user)){
                 return new Response(
                         HttpStatus.CREATED,
                         ContentType.JSON,
@@ -37,7 +40,7 @@ public class SessionController extends Controller{
                         "{ \"message\": \"Invalid Username or password!\" }"
                 );
             }
-        } catch (JsonProcessingException e){
+        } catch (Exception e){
             e.printStackTrace();
         }
         return new Response(
