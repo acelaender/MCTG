@@ -5,3 +5,4 @@ database user:
 database tables:
     users(int id, string username, string password, string bio, blob image, int elo, int wins, int losses, int coins)
 
+

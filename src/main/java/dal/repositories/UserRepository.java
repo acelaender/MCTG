@@ -31,19 +31,34 @@ public class UserRepository {
                         );
                 userRows.add(userInRow);
             }
+
+            //TODO Get latest oid
+            int oid = 0;
+            //
+
             if(userRows.isEmpty()){
                 try(PreparedStatement preparedStatement2 = this.unitOfWork.prepareStatement("""
-                    //TODO SQLCODE
+                    insert into users (int id, string username, string password, int elo, int wins, int losses, int coins)
+                    values (?, ?, ?, ?, ?, ?, ?)
                 """)){
-                    //TODO Execute statement and insert parameters
+                    preparedStatement2.setInt(1, oid);
+                    preparedStatement2.setString(2, user.getUsername());
+                    preparedStatement2.setString(3, user.getPassword());
+                    //TODO: Standard ELO---------------------------
+                    preparedStatement2.setInt(4, 100);
+                    //-------------------------------------
+                    preparedStatement2.setInt(5, 0);
+                    preparedStatement2.setInt(6, 0);
+                    preparedStatement2.setInt(7, 20);
+
+                    resultSet = preparedStatement2.executeQuery();
+
                 } catch (SQLException e){
                     throw new SQLException("Error  at insert Statement", e);
-                    return false;
                 }
             }
         } catch (SQLException b) {
             throw new SQLException("Error at select Statement", b);
-            return false;
         }
         return true;
     }
@@ -54,7 +69,7 @@ public class UserRepository {
                 """)){
             preparedStatement.setString(1, user.getUsername());
             ResultSet resultSet = preparedStatement.executeQuery();
-            Collection<User> userRows = new ArrayList<>();
+            ArrayList<User> userRows = new ArrayList<>();
             while (resultSet.next()){
                 User userInRow = new User(
                         resultSet.getString(2),
@@ -63,13 +78,17 @@ public class UserRepository {
                 userRows.add(userInRow);
             }
 
+            //PASSWORD COMPARISON:
+            //TODO: hash pw and compare it
+
             if(userRows.get(0).getPassword().equals(user.getPassword())){
                 return true;
             }else return false;
 
+
+
         }catch (SQLException e){
             throw new SQLException("Error at select Statement", e);
-            return false;
         }
     }
 
