@@ -8,14 +8,10 @@ import httpServer.http.HttpStatus;
 import httpServer.server.Request;
 import httpServer.server.Response;
 import models.User;
-import persistance.DummyPersistanceLayer;
 import service.Controller;
 
 public class UsersController extends Controller {
-    private DummyPersistanceLayer persistenceLayer;
-    public UsersController() {
-        this.persistenceLayer = new DummyPersistanceLayer();
-    }
+    public UsersController() {}
 
     public Response registerUser(Request request){
         UnitOfWork unitOfWork = new UnitOfWork();
@@ -43,5 +39,13 @@ public class UsersController extends Controller {
                 "{ \"message\": \"Internal Server Error \" }"
         );
     }
+
+    public Response getUserData(Request request){return null;}
+
+    public Response getUserStats(Request request){return null;}
+
+    public Response alterUser(Request request){return null;}
+
+
 
 }

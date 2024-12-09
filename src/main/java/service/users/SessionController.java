@@ -14,13 +14,11 @@ import httpServer.http.HttpStatus;
 import httpServer.server.Request;
 import httpServer.server.Response;
 import models.User;
-import persistance.DummyPersistanceLayer;
 import service.Controller;
 
 public class SessionController extends Controller{
-    private DummyPersistanceLayer persistenceLayer;
     public SessionController() {
-        this.persistenceLayer = new DummyPersistanceLayer();
+
     }
 
     public Response loginUser(Request request){
