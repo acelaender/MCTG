@@ -2,6 +2,8 @@ package dal.repositories;
 
 import dal.UnitOfWork;
 import models.User;
+import models.UserData;
+import models.UserStats;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -31,9 +33,7 @@ public class UserRepository {
                         );
                 userRows.add(userInRow);
             }
-
-            //TODO Get latest oid
-            int oid = 0;
+            int oid = getOid();
             //
 
             if(userRows.isEmpty()){
@@ -92,16 +92,59 @@ public class UserRepository {
         }
     }
 
-    public User getUserCredentials(User user){
-        return null;
+    public UserData getUserCredentials(User user) throws SQLException{
+        try(PreparedStatement preparedStatement = this.unitOfWork.prepareStatement("""
+                select * from users where username = ?
+                """)){
+            preparedStatement.setString(1, user.getUsername());
+            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            return new UserData(
+                    resultSet.getString(2),
+                    resultSet.getString(4),
+                    resultSet.getString(5)
+            );
+
+        }catch (SQLException e){
+            throw new SQLException("Error at select Statement", e);
+        }
     }
 
-    public User getUserStats(User user){
-        return null;
+    public UserStats getUserStats(User user) throws SQLException{
+        try(PreparedStatement preparedStatement = this.unitOfWork.prepareStatement("""
+                select * from users where username = ?
+                """)){
+            preparedStatement.setString(1, user.getUsername());
+            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            return new UserStats(
+                    resultSet.getString(2),
+                    resultSet.getInt(7),
+                    resultSet.getInt(8),
+                    resultSet.getInt(6)
+            );
+
+        }catch (SQLException e){
+            throw new SQLException("Error at select Statement", e);
+        }
     }
 
     public boolean alterUser(User user){
         return false;
+    }
+
+    private int getOid() throws SQLException {
+        try(PreparedStatement preparedStatement = this.unitOfWork.prepareStatement("""
+                select oid from users order by oid desc
+                """)){
+            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            int oid = resultSet.getInt(1);
+
+            return oid;
+        }catch (SQLException e){
+            throw new SQLException("Error at select Statement", e);
+        }
     }
 
 }
