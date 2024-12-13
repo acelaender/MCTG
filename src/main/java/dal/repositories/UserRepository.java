@@ -5,6 +5,7 @@ import models.User;
 import models.UserData;
 import models.UserStats;
 
+import java.sql.Blob;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;

@@ -14,7 +14,7 @@ public enum DatabaseManager {
     {
         try {
             return DriverManager.getConnection(
-                    "jdbc:postgresql://localhost:5432/weatherdb",
+                    "jdbc:postgresql://localhost:5432/mctgprod",
                     "mctg",
                     "mctgproject2024");
         } catch (SQLException e) {

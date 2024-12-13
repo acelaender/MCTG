@@ -2,7 +2,14 @@ database user:
     username: mctg
     password: mctgproject2024
 
-database tables:
-    users(int id, string username, string password, string bio, blob image, int elo, int wins, int losses, int coins)
 
+db: mctgprod
+
+database tables:
+    users(int id(PRIMARYKEY), string username(VARCHAR50), string password(VARCHAR500), string bio(VARCHAR600), blob image, int elo, int wins, int losses, int coins)
+
+commands for db:
+    docker run -d --rm --name postgresdb -e POSTGRES_USER=mctg -e POSTGRES_PASSWORD=mctgproject2024 -p 5432:5432 -v pgdata:/var/lib/postgresql/data postgres
+    (connect) docker exec -it postgresdb bash
+    psql -U mctg
 
