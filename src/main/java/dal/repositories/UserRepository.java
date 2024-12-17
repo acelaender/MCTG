@@ -139,8 +139,14 @@ public class UserRepository {
                 select oid from users order by oid desc
                 """)){
             ResultSet resultSet = preparedStatement.executeQuery();
-            resultSet.next();
-            int oid = resultSet.getInt(1);
+
+            int oid;
+
+            if(resultSet.next()){
+                oid = resultSet.getInt(1);
+            }else{
+                oid = 1;
+            }
 
             return oid;
         }catch (SQLException e){

@@ -6,10 +6,11 @@ database user:
 db: mctgprod
 
 database tables:
-    users(int id(PRIMARYKEY), string username(VARCHAR50), string password(VARCHAR500), string bio(VARCHAR600), blob image, int elo, int wins, int losses, int coins)
+    users(int oid(PRIMARYKEY), string username(VARCHAR50), string password(VARCHAR500), string bio(VARCHAR600), blob image, int elo, int wins, int losses, int coins)
 
 commands for db:
     docker run -d --rm --name postgresdb -e POSTGRES_USER=mctg -e POSTGRES_PASSWORD=mctgproject2024 -p 5432:5432 -v pgdata:/var/lib/postgresql/data postgres
     (connect) docker exec -it postgresdb bash
     psql -U mctg
 
+CREATE TABLE users (oid INT PRIMARY KEY, username VARCHAR(50) NOT NULL, password VARCHAR(500) NOT NULL, bio VARCHAR(600), image VARCHAR(100), elo INT NOT NULL, wins INT NOT NULL, losses INT NOT NULL, coins INT NOT NULL);
