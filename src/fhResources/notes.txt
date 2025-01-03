@@ -7,6 +7,10 @@ db: mctgprod
 
 database tables:
     users(int oid(PRIMARYKEY), string username(VARCHAR50), string password(VARCHAR500), string bio(VARCHAR600), blob image, int elo, int wins, int losses, int coins)
+    usercards(int oid(PRIMARy KEY), int card (fk cards), int user(fk user), int indeck)
+    cards(int oid(PRIMARYKEY), string id (varchar 50), string name(VARCHAR 50, )) TODO not done
+
+
 
 commands for db:
     docker run -d --rm --name postgresdb -e POSTGRES_USER=mctg -e POSTGRES_PASSWORD=mctgproject2024 -p 5432:5432 -v pgdata:/var/lib/postgresql/data postgres

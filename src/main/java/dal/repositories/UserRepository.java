@@ -143,7 +143,7 @@ public class UserRepository {
             int oid;
 
             if(resultSet.next()){
-                oid = resultSet.getInt(1);
+                oid = resultSet.getInt(1) + 1;
             }else{
                 oid = 1;
             }
@@ -152,6 +152,16 @@ public class UserRepository {
         }catch (SQLException e){
             throw new SQLException("Error at select Statement", e);
         }
+    }
+
+    public void getLeaderboard(){
+        //return leaderboard
+        //TODO get Leaderboard
+    }
+
+    public boolean subractCoins(){
+        return false;
+        //TODO subtract coins
     }
 
 }
