@@ -3,11 +3,13 @@ package models;
 import java.lang.reflect.Type;
 
 public class Card {
+    private String id;
     private String name;
     private Element element;
     private int damage;
 
-    public Card(String name, Element element, int damage) {
+    public Card(String id, String name, Element element, int damage) {
+        this.id = id;
         this.name = name;
         this.element = element;
         this.damage = damage;

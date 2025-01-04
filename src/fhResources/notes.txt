@@ -6,9 +6,11 @@ database user:
 db: mctgprod
 
 database tables:
-    users(int oid(PRIMARYKEY), string username(VARCHAR50), string password(VARCHAR500), string bio(VARCHAR600), blob image, int elo, int wins, int losses, int coins)
+    users(1int oid(PRIMARYKEY), 2string username(VARCHAR50, PRIMARYKEY?), 3string password(VARCHAR500), 4string bio(VARCHAR600), 5blob image, 6int elo, 7int wins, 8int losses, 9int coins, int admin)
     usercards(int oid(PRIMARy KEY), int card (fk cards), int user(fk user), int indeck)
-    cards(int oid(PRIMARYKEY), string id (varchar 50), string name(VARCHAR 50, )) TODO not done
+    cards(string id (varchar 50, PRIMARY KEY), string name(VARCHAR 50), int damage) TODO not done
+    packages(
+    tradings(1. string id(PRIMARY KEY), 2. string cardtotrade(VARCHAR 50), 3. string type(VARCHAR 50), 4. int minimumdamage)
 
 
 

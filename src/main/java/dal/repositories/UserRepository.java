@@ -154,9 +154,26 @@ public class UserRepository {
         }
     }
 
-    public void getLeaderboard(){
-        //return leaderboard
-        //TODO get Leaderboard
+    public ArrayList<UserStats> getLeaderboard() throws SQLException{
+        try(PreparedStatement preparedStatement = this.unitOfWork.prepareStatement("""
+                select * from users order by elo desc
+                """)){
+            ResultSet resultSet = preparedStatement.executeQuery();
+            ArrayList<UserStats> userStatsRows = new ArrayList<>();
+
+            while (resultSet.next()){
+                UserStats statsInRow = new UserStats(
+                        resultSet.getString(2),
+                        resultSet.getInt(7),
+                        resultSet.getInt(8),
+                        resultSet.getInt(6)
+                );
+                userStatsRows.add(statsInRow);
+            }
+            return userStatsRows;
+        }catch(SQLException e){
+            throw new SQLException("Error at select Statement", e);
+        }
     }
 
     public boolean subractCoins(){
