@@ -8,6 +8,7 @@ import httpServer.http.HttpStatus;
 import httpServer.server.Request;
 import httpServer.server.Response;
 import models.User;
+import models.UserData;
 import service.Controller;
 
 public class UsersController extends Controller {
@@ -40,7 +41,34 @@ public class UsersController extends Controller {
         );
     }
 
-    public Response getUserData(Request request){return null;}
+    public Response getUserData(Request request){
+        UnitOfWork unitOfWork = new UnitOfWork();
+        try(unitOfWork){
+            //TODO check if admin or user
+            String username = request.getPathParts().get(1);
+            UserData userData = new UserRepository(unitOfWork).getUserCredentials(username);
+            if(userData != null){
+                return new Response(
+                        HttpStatus.OK,
+                        ContentType.JSON,
+                        "{ \"message\": \"Success\" }"//TODO write in JSON
+                );
+            }else{
+                return new Response(
+                        HttpStatus.NOT_FOUND,
+                        ContentType.JSON,
+                        "{ \"message\": \"User not found!\" }"
+                );
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return new Response(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                ContentType.JSON,
+                "{ \"message\": \"Internal Server Error \" }"
+        );
+    }
 
     public Response getUserStats(Request request){return null;}
 

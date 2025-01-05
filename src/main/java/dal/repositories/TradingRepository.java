@@ -32,12 +32,14 @@ public class TradingRepository {
         }
     }
 
-    public void deleteDeal(int id) throws SQLException {
+    public boolean deleteDeal(String id) throws SQLException {
         try(PreparedStatement preparedStatement = this.unitOfWork.prepareStatement("""
                 delete from tradingdeals where id = ?
                 """)){
-            preparedStatement.setInt(1, id);
+            preparedStatement.setString(1, id);
             preparedStatement.executeQuery();
+
+            return true;
 
         }catch (SQLException e){
             throw new SQLException("Error at delete Statement", e);

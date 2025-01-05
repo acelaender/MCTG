@@ -19,7 +19,11 @@ public class UserService implements Service{
     {
         if (request.getMethod() == Method.POST) { //REGISTER USER
             return this.usersController.registerUser(request);
-        }/*
+        }else if(request.getMethod() == Method.GET){
+            //TODO see if username is in path && get that username
+            return this.usersController.getUserData(request);
+        }
+        /*
         else if (request.getMethod() == Method.GET)
         {
             return this.usersController.getWeatherPerRepository();

@@ -14,22 +14,50 @@ public class CardRepository {
     private UnitOfWork unitOfWork;
 
     public CardRepository(UnitOfWork unitOfWork){
-        this.unitofWork = unitofWork;
+        this.unitOfWork = unitOfWork;
     }
 
     //TODO create 4 functions in cardrepos
 
-    public boolean createPackage(/*Array of 5 Cards*/){
-        //INSERT INTO packages
-        return false;
+    public boolean createPackage(ArrayList<Card> cards) throws SQLException {
+        try(PreparedStatement preparedStatement = this.unitOfWork.prepareStatement("""
+                insert into packages ( card1, card2, card3, card4, card5 ) values ( ?, ?, ?, ?, ? )
+                """)){
+            preparedStatement.setString(1, cards.get(0).getId());
+            preparedStatement.setString(2, cards.get(1).getId());
+            preparedStatement.setString(3, cards.get(2).getId());
+            preparedStatement.setString(4, cards.get(3).getId());
+            preparedStatement.setString(5, cards.get(4).getId());
+
+            preparedStatement.executeQuery();
+            return true;
+
+        }catch (SQLException e){
+            throw new SQLException("Internal Server Error", e);
+        }
     }
 
-    public void  buyPackage(/*Specific Pack? random Pack?*/){
+    public void  buyPackage(String username) throws SQLException{
         //SELECT * FROM packages
+        try(PreparedStatement preparedStatement = this.unitOfWork.prepareStatement("""
+                select id from cards where id in ( select card1, card2, card3, card4, card5 from packages where id = ? )
+                """)){
+            //TODO Select random package
+            int TESTINT = 1;
+            preparedStatement.setInt(1, TESTINT);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            ArrayList<String> cardIds = new ArrayList<>();
+            while(resultSet.next()){
+                cardIds.add(resultSet.getString("id"));
+                //TODO insert into usercards
+            }
+        }catch (SQLException e) {
+            throw new SQLException("Internal Server Error", e);
+        }
     }
 
     public ArrayList<Card> getCards(String username) throws SQLException {
-        try(PreparedStatement preparedStatement = this.unitofWork.prepareStatement("""
+        try(PreparedStatement preparedStatement = this.unitOfWork.prepareStatement("""
                 select * from usercards where user = ?
                 """)){
             preparedStatement.setString(1, username);
@@ -56,7 +84,7 @@ public class CardRepository {
     }
 
     public ArrayList<Card> getDeck(String username) throws SQLException{
-        try(PreparedStatement preparedStatement = this.unitofWork.prepareStatement("""
+        try(PreparedStatement preparedStatement = this.unitOfWork.prepareStatement("""
                 select * from cards where id in (select card from usercards where user = ? and indeck = 1 )
                 """)){
             preparedStatement.setString(1, username);
@@ -80,7 +108,7 @@ public class CardRepository {
     }
 //TODO finish function
     public boolean setDeck(String username, ArrayList<Card> cards) throws SQLException{
-        try(PreparedStatement preparedStatement = this.unitofWork.prepareStatement("""
+        try(PreparedStatement preparedStatement = this.unitOfWork.prepareStatement("""
                 update usercards set indeck = 1 where user = ?
                 """)){
             preparedStatement.setString(1, username);
@@ -91,4 +119,8 @@ public class CardRepository {
         }
         return false;
     }
+
+
+    //TODO make getoid function
+
 }

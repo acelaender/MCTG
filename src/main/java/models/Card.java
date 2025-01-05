@@ -38,4 +38,8 @@ public class Card {
     public void setDamage(int damage) {
         this.damage = damage;
     }
+
+    public String getId() {
+        return id;
+    }
 }

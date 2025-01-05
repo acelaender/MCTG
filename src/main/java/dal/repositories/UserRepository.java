@@ -93,11 +93,11 @@ public class UserRepository {
         }
     }
 
-    public UserData getUserCredentials(User user) throws SQLException{
+    public UserData getUserCredentials(String username) throws SQLException{
         try(PreparedStatement preparedStatement = this.unitOfWork.prepareStatement("""
                 select * from users where username = ?
                 """)){
-            preparedStatement.setString(1, user.getUsername());
+            preparedStatement.setString(1, username);
             ResultSet resultSet = preparedStatement.executeQuery();
             resultSet.next();
             return new UserData(
