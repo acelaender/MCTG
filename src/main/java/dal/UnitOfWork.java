@@ -18,6 +18,7 @@ public class UnitOfWork implements AutoCloseable {
         }
     }
 
+
     public void commitTransaction()
     {
         if (this.connection != null) {

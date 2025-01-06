@@ -35,6 +35,12 @@
             <artifactId>postgresql</artifactId>
             <version>42.6.0</version> <!-- Use the latest version -->
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>RELEASE</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 

@@ -6,6 +6,9 @@ public class UserStats {
     private int losses;
     private int elo;
 
+    public UserStats() {
+    }
+
     public UserStats(String username, int wins, int losses, int elo) {
         this.username = username;
         this.wins = wins;

@@ -19,21 +19,16 @@ public class UserService implements Service{
     {
         if (request.getMethod() == Method.POST) { //REGISTER USER
             return this.usersController.registerUser(request);
-        }else if(request.getMethod() == Method.GET){
+        }else if(request.getMethod() == Method.GET && request.getPathParts().size() == 2) {
             //TODO see if username is in path && get that username
             return this.usersController.getUserData(request);
+        }else if(request.getMethod() == Method.PUT){
+            return this.usersController.setUserData(request);
+        }else if(request.getMethod() == Method.GET && request.getPathParts().get(0).equals("stats")){
+            return this.usersController.getUserStats(request);
+        }else if(request.getMethod() == Method.GET && request.getPathParts().get(0).equals("scoreboard")){
+            return this.usersController.getScoreboard(request);
         }
-        /*
-        else if (request.getMethod() == Method.GET)
-        {
-            return this.usersController.getWeatherPerRepository();
-            //return this.weatherController.getWeatherPerRepository();
-        }
-        else if (request.getMethod() == Method.POST)
-        {
-            return this.usersController.addWeather(request);
-        }
-        */
 
         return new Response(
                 HttpStatus.BAD_REQUEST,

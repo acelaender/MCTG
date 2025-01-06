@@ -12,16 +12,20 @@ import httpServer.server.Service;
 public class TradingService implements Service {
     private final TradingsController tradingsController;
 
-    public TradingService(TradingsController tradingsController) {
-        this.tradingsController = tradingsController;
+    public TradingService() {
+        this.tradingsController = new TradingsController();
     }
 
     @Override
     public Response handleRequest(Request request){
-        if(request.getMethod() == Method.POST){ //Make new Trade
+        if(request.getMethod() == Method.POST && request.getPathParts().size() == 1){ //Make new Trade
             return this.tradingsController.createTrade(request);
         }else if(request.getMethod() == Method.DELETE){
             return this.tradingsController.deleteTrade(request);
+        }else if (request.getMethod() == Method.GET){
+            return this.tradingsController.getTrades(request);
+        }else if (request.getMethod() == Method.POST && request.getPathParts().size() == 2){
+            return this.tradingsController.makeTrade(request);
         }
 
         return new Response(

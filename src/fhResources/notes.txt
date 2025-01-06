@@ -6,9 +6,9 @@ database user:
 db: mctgprod
 
 database tables:
-    users(1. string username(VARCHAR50, PRIMARYKEY), 2. string password(VARCHAR500), 3. string bio(VARCHAR600), 4. blob image, 5. int elo, 6. int wins, 7. int losses, 8. int coins, 9. int admin)
+    users(1. string username(VARCHAR50, PRIMARYKEY), 2. string password(VARCHAR500), 3. string bio(VARCHAR600), 4. blob image(VARCHAR 500), 5. int elo(NOT NULL), 6. int wins(NOT NULL), 7. int losses(NOT NULL), 8. int coins(NOT NULL), 9. int admin(NOT NULL))
     usercards(int oid(PRIMARY KEY), int card (fk cards), int user(fk user), int indeck)
-    cards(1. string id (varchar 50, PRIMARY KEY), 2. string name(VARCHAR 50), 3. int damage) TODO not done
+    cards(1. string id (varchar 50, PRIMARY KEY), 2. string name(VARCHAR 50), 3. int damage)
     packages(1.int id (PRIMARY KEY, AUTO INCREMENT), 2. string card1 (VARCHAR 50), 3. string card2 (VARCHAR 50), 4. string card3 (VARCHAR50), 5. string card4(VARCHAR50), 6. string card5(varchar 50))
     tradings(1. string id(PRIMARY KEY), 2. string cardtotrade(VARCHAR 50), 3. string type(VARCHAR 50), 4. int minimumdamage)
 
@@ -20,3 +20,19 @@ commands for db:
     psql -U mctg
 
 CREATE TABLE users (oid INT PRIMARY KEY, username VARCHAR(50) NOT NULL, password VARCHAR(500) NOT NULL, bio VARCHAR(600), image VARCHAR(100), elo INT NOT NULL, wins INT NOT NULL, losses INT NOT NULL, coins INT NOT NULL);
+
+CREATE TABLE users (username VARCHAR(50) PRIMARY KEY, password VARCHAR(500), bio VARCHAR(600), image VARCHAR(500), elo INT NOT NULL, wins INT NOT NULL, losses INT NOT NULL, coins INT NOT NULL, admin INT NOT NULL);
+CREATE TABLE packages ( id PRIMARY KEY AUTO INCREMENT, card1 VARCHAR(50), card2 VARCHAR(50), card3 VARCHAR(50), card4 VARCHAR(50), card5 VARCHAR(50) );
+CREATE TABLE cards (id VARCHAR(50) PRIMARY KEY, name VARCHAR(50), damage INT );
+CREATE TABLE usercards ( id SERIAL PRIMARY KEY, card VARCHAR(50), owner VARCHAR(50), indeck INT );
+    ALTER TABLE usercards ADD CONSTRAINT fk_card FOREIGN KEY (card) REFERENCES cards (id) ON DELETE CASCADE;
+    ALTER TABLE usercards ADD CONSTRAINT fk_owner FOREIGN KEY (owner) REFERENCES users (username) ON DELETE CASCADE;
+CREATE TABLE tradingdeals ( id SERIAL PRIMARY KEY, cardtotrade VARCHAR(50), minimumdamage INT );
+    ALTER TABLE tradingdeals ADD CONSTRAINT fk_cardtotrade FOREIGN KEY (cardtotrade) REFERENCES cards (id) ON DELETE CASCADE;
+
+
+
+curl -i -X PUT http://localhost:10001/deck --header "Content-Type: application/json" --header "Authorization: Bearer altenhof-mtcgToken" -d "[\"d7d0cb94-2cbf-4f97-8ccf-9933dc5354b8\", \"44c82fbc-ef6d-44ab-8c7a-9fb19a0e7c6e\", \"2c98cd06-518b-464c-b911-8d787216cddd\", \"951e886a-0fbf-425d-8df5-af2ee4830d85\"]"
+
+
+

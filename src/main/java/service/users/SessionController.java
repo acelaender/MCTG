@@ -27,7 +27,7 @@ public class SessionController extends Controller{
             User user = this.getObjectMapper().readValue(request.getBody(), User.class);
             if(new UserRepository(unitOfWork).login(user)){
                 return new Response(
-                        HttpStatus.CREATED,
+                        HttpStatus.OK,
                         ContentType.JSON,
                         "{ \"token\": \"" + user.getUsername() + "-mctgToken\" }"
                 );

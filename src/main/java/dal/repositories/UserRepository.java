@@ -21,42 +21,35 @@ public class UserRepository {
 
     public boolean registerUser(User user) throws SQLException {
         try(PreparedStatement preparedStatement = this.unitOfWork.prepareStatement("""
-                select * from users
-                where username = ?
+                SELECT * FROM users WHERE username = ?
             """)){
             preparedStatement.setString(1, user.getUsername());
             ResultSet resultSet = preparedStatement.executeQuery();
-            Collection<User> userRows = new ArrayList<>();
-            while (resultSet.next()){
-                User userInRow = new User(
-                        resultSet.getString(2),
-                        resultSet.getString(3)
-                        );
-                userRows.add(userInRow);
-            }
-            int oid = getOid();
-            //
-
-            if(userRows.isEmpty()){
+            if(!resultSet.next()){
                 try(PreparedStatement preparedStatement2 = this.unitOfWork.prepareStatement("""
-                    insert into users (int id, string username, string password, int elo, int wins, int losses, int coins)
-                    values (?, ?, ?, ?, ?, ?, ?)
+                    INSERT INTO users (username, password, elo, wins, losses, coins, admin)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
                 """)){
-                    preparedStatement2.setInt(1, oid);
-                    preparedStatement2.setString(2, user.getUsername());
-                    preparedStatement2.setString(3, user.getPassword());
+                    preparedStatement2.setString(1, user.getUsername());  //USERNAME
+                    preparedStatement2.setString(2, user.getPassword());  //PASSWORD
                     //TODO: Standard ELO---------------------------
-                    preparedStatement2.setInt(4, 100);
+                    preparedStatement2.setInt(3, 100);                 //ELO
                     //-------------------------------------
-                    preparedStatement2.setInt(5, 0);
-                    preparedStatement2.setInt(6, 0);
-                    preparedStatement2.setInt(7, 20);
+                    preparedStatement2.setInt(4, 0);                   //WINS
+                    preparedStatement2.setInt(5, 0);                   //LOSSES
+                    preparedStatement2.setInt(6, 20);                  //COINS
+                    preparedStatement2.setInt(7, 0);                   //ADMIN
 
-                    resultSet = preparedStatement2.executeQuery();
+                    preparedStatement2.executeUpdate();
+
+                    this.unitOfWork.commitTransaction();
+
 
                 } catch (SQLException e){
                     throw new SQLException("Error  at insert Statement", e);
                 }
+            }else{
+                return false;
             }
         } catch (SQLException b) {
             throw new SQLException("Error at select Statement", b);
@@ -73,8 +66,8 @@ public class UserRepository {
             ArrayList<User> userRows = new ArrayList<>();
             while (resultSet.next()){
                 User userInRow = new User(
-                        resultSet.getString(2),
-                        resultSet.getString(3)
+                        resultSet.getString(1),
+                        resultSet.getString(2)
                 );
                 userRows.add(userInRow);
             }
@@ -82,7 +75,7 @@ public class UserRepository {
             //PASSWORD COMPARISON:
             //TODO: hash pw and compare it
 
-            if(userRows.get(0).getPassword().equals(user.getPassword())){
+            if(userRows.get(0).getPassword().equals(user.getPassword()) && userRows.size() == 1){
                 return true;
             }else return false;
 
@@ -101,9 +94,9 @@ public class UserRepository {
             ResultSet resultSet = preparedStatement.executeQuery();
             resultSet.next();
             return new UserData(
-                    resultSet.getString(2),
-                    resultSet.getString(4),
-                    resultSet.getString(5)
+                    resultSet.getString(1),
+                    resultSet.getString(3),
+                    resultSet.getString(4)
             );
 
         }catch (SQLException e){
@@ -111,18 +104,18 @@ public class UserRepository {
         }
     }
 
-    public UserStats getUserStats(User user) throws SQLException{
+    public UserStats getUserStats(String username) throws SQLException{
         try(PreparedStatement preparedStatement = this.unitOfWork.prepareStatement("""
                 select * from users where username = ?
                 """)){
-            preparedStatement.setString(1, user.getUsername());
+            preparedStatement.setString(1, username);
             ResultSet resultSet = preparedStatement.executeQuery();
             resultSet.next();
             return new UserStats(
-                    resultSet.getString(2),
+                    resultSet.getString(1),
+                    resultSet.getInt(6),
                     resultSet.getInt(7),
-                    resultSet.getInt(8),
-                    resultSet.getInt(6)
+                    resultSet.getInt(5)
             );
 
         }catch (SQLException e){
@@ -130,31 +123,22 @@ public class UserRepository {
         }
     }
 
-    public boolean alterUser(User user){
-        return false;
-    }
-
-    private int getOid() throws SQLException {
+    public boolean setUserData(UserData userData) throws SQLException{
         try(PreparedStatement preparedStatement = this.unitOfWork.prepareStatement("""
-                select oid from users order by oid desc
-                """)){
-            ResultSet resultSet = preparedStatement.executeQuery();
+                update users set bio = ?, image = ? where username = ?""")){
+            preparedStatement.setString(1, userData.getBio());
+            preparedStatement.setString(2, userData.getImage());
+            preparedStatement.setString(3, userData.getUsername());
 
-            int oid;
-
-            if(resultSet.next()){
-                oid = resultSet.getInt(1) + 1;
-            }else{
-                oid = 1;
-            }
-
-            return oid;
+            preparedStatement.executeUpdate();
+            this.unitOfWork.commitTransaction();
+            return true;
         }catch (SQLException e){
-            throw new SQLException("Error at select Statement", e);
+            throw new SQLException("Error at update UserData Statement", e);
         }
     }
 
-    public ArrayList<UserStats> getLeaderboard() throws SQLException{
+    public ArrayList<UserStats> getScoreBoard() throws SQLException{
         try(PreparedStatement preparedStatement = this.unitOfWork.prepareStatement("""
                 select * from users order by elo desc
                 """)){
@@ -163,10 +147,10 @@ public class UserRepository {
 
             while (resultSet.next()){
                 UserStats statsInRow = new UserStats(
-                        resultSet.getString(2),
+                        resultSet.getString(1),
+                        resultSet.getInt(6),
                         resultSet.getInt(7),
-                        resultSet.getInt(8),
-                        resultSet.getInt(6)
+                        resultSet.getInt(5)
                 );
                 userStatsRows.add(statsInRow);
             }
@@ -176,9 +160,62 @@ public class UserRepository {
         }
     }
 
-    public boolean subractCoins(){
-        return false;
-        //TODO subtract coins
+    public boolean subractCoins(String username) throws SQLException{
+        try(PreparedStatement preparedStatement1 = this.unitOfWork.prepareStatement("""
+                select coins from users where username = ?""")){
+            preparedStatement1.setString(1, username);
+            ResultSet resultSet = preparedStatement1.executeQuery();
+            if(resultSet.next()){
+                if(resultSet.getInt(1) < 5){
+                    return false;
+                }
+            }
+        }catch (SQLException e){
+            throw new SQLException("Error at select coins Statement", e);
+        }
+        try(PreparedStatement preparedStatement = this.unitOfWork.prepareStatement("""
+                update users set coins = coins - 5 where username = ? """)){
+            preparedStatement.setString(1, username);
+            preparedStatement.executeUpdate();
+            return true;
+        }catch (SQLException e){
+            throw new SQLException("Error at update Statement", e);
+        }
+    }
+
+    public boolean isAdmin(String username) throws SQLException{
+        try(PreparedStatement preparedStatement = this.unitOfWork.prepareStatement("""
+                select admin from users where username = ?""")) {
+            preparedStatement.setString(1, username);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if(resultSet.next() && resultSet.getInt("admin") == 1){
+                return true;
+            }else return false;
+        }catch (SQLException e){
+            throw new SQLException("Error at select Statement", e);
+        }
+    }
+
+    public void loose(String username) throws SQLException{
+        try(PreparedStatement preparedStatement = this.unitOfWork.prepareStatement("""
+                update users set elo = elo - 5, losses = losses - 1 where username = ?""")) {
+            preparedStatement.setString(1, username);
+            preparedStatement.executeUpdate();
+            this.unitOfWork.commitTransaction();
+        }catch (SQLException e){
+            throw new SQLException("Error at update loss Statement", e);
+        }
+    }
+
+    public void win(String username) throws SQLException{
+        try(PreparedStatement preparedStatement = this.unitOfWork.prepareStatement("""
+                update users set elo = elo + 3, wins = wins + 1 where username = ?""")) {
+            preparedStatement.setString(1, username);
+            preparedStatement.executeUpdate();
+            this.unitOfWork.commitTransaction();
+        }catch (SQLException e){
+            throw new SQLException("Error at update loss Statement", e);
+        }
     }
 
 }
