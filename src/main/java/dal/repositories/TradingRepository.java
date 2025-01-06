@@ -11,7 +11,6 @@ import java.util.ArrayList;
 
 public class TradingRepository {
 
-    //TODO create 3 functions in tradings
 
     private UnitOfWork unitOfWork;
 
@@ -93,7 +92,7 @@ public class TradingRepository {
 
             PreparedStatement preparedStatement6 = this.unitOfWork.prepareStatement("""
                     select owner from usercards where card = ( select cardtotrade from tradingdeals where id = ? )""");
-                preparedStatement6.setString(1, id); //TODO WHAT IS ID
+                preparedStatement6.setString(1, id);
                 preparedStatement6.executeQuery();
                 resultSet = preparedStatement6.getResultSet();
                 while(resultSet.next()){

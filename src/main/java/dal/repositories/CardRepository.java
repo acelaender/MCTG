@@ -18,9 +18,7 @@ public class CardRepository {
         this.unitOfWork = unitOfWork;
     }
 
-    //TODO create 1 functions in cardrepos
 
-    //TODO WORKS
     public boolean createPackage(ArrayList<Card> cards) throws SQLException {
 
         for (int i = 0; i < cards.size(); i++) {
@@ -58,7 +56,6 @@ public class CardRepository {
 
     }
 
-    //TODO WORKS
     public boolean buyPackage(String username) throws SQLException{
         try(PreparedStatement preparedStatement = this.unitOfWork.prepareStatement("""
                 select id from cards where id in ( SELECT card1 FROM packages WHERE id = ?
@@ -114,7 +111,6 @@ public class CardRepository {
         }
     }
 
-    //TODO WORKS
     public ArrayList<Card> getCards(String username) throws SQLException {
         try(PreparedStatement preparedStatement = this.unitOfWork.prepareStatement("""
                 select * from usercards where owner = ?
@@ -141,7 +137,6 @@ public class CardRepository {
         }
     }
 
-    //TODO WORKS
     public ArrayList<Card> getDeck(String username) throws SQLException{
         try(PreparedStatement preparedStatement = this.unitOfWork.prepareStatement("""
                 select * from cards where id in (select card from usercards where owner = ? and indeck = 1 )
@@ -166,7 +161,6 @@ public class CardRepository {
     }
 
 
-    //TODO finish function
     public boolean setDeck(String username, ArrayList<Card> cards) throws SQLException{
         for (int i = 0; i < cards.size(); i++) {
             try(PreparedStatement preparedStatement = this.unitOfWork.prepareStatement("""

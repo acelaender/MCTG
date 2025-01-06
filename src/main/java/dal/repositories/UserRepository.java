@@ -12,6 +12,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.Base64;
+
 public class UserRepository {
     private UnitOfWork unitOfWork;;
 
@@ -26,15 +31,14 @@ public class UserRepository {
             preparedStatement.setString(1, user.getUsername());
             ResultSet resultSet = preparedStatement.executeQuery();
             if(!resultSet.next()){
+                user.setPassword(hashPassword(user.getPassword()));
                 try(PreparedStatement preparedStatement2 = this.unitOfWork.prepareStatement("""
                     INSERT INTO users (username, password, elo, wins, losses, coins, admin)
                     VALUES (?, ?, ?, ?, ?, ?, ?)
                 """)){
                     preparedStatement2.setString(1, user.getUsername());  //USERNAME
                     preparedStatement2.setString(2, user.getPassword());  //PASSWORD
-                    //TODO: Standard ELO---------------------------
                     preparedStatement2.setInt(3, 100);                 //ELO
-                    //-------------------------------------
                     preparedStatement2.setInt(4, 0);                   //WINS
                     preparedStatement2.setInt(5, 0);                   //LOSSES
                     preparedStatement2.setInt(6, 20);                  //COINS
@@ -73,9 +77,9 @@ public class UserRepository {
             }
 
             //PASSWORD COMPARISON:
-            //TODO: hash pw and compare it
 
-            if(userRows.get(0).getPassword().equals(user.getPassword()) && userRows.size() == 1){
+
+            if(verifyPassword(user.getPassword(), userRows.get(0).getPassword()) && userRows.size() == 1){
                 return true;
             }else return false;
 
@@ -216,6 +220,24 @@ public class UserRepository {
         }catch (SQLException e){
             throw new SQLException("Error at update loss Statement", e);
         }
+    }
+
+
+
+    public static String hashPassword(String password) {
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+            byte[] hashedBytes = messageDigest.digest(password.getBytes());
+
+            return Base64.getEncoder().encodeToString(hashedBytes);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Error: SHA-256 algorithm not found!", e);
+        }
+    }
+
+    public static boolean verifyPassword(String enteredPassword, String storedHash) {
+        String hashedEnteredPassword = hashPassword(enteredPassword);
+        return hashedEnteredPassword.equals(storedHash);
     }
 
 }
