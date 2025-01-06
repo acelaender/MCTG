@@ -35,4 +35,19 @@ public class Response {
     }
 
 
+    public int getStatus() {
+        return status;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public String getContent() {
+        return content;
+    }
 }

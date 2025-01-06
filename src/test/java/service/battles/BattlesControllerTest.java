@@ -56,6 +56,25 @@ public class BattlesControllerTest {
     }
 
     @Test
+    public void testFight_specialFightkraken(){
+        Card card1 = new Card("abcd", "Kraken", 2, Element.FIRE, 20);
+        Card card2 = new Card("cdef", "NormalSpell", 1, Element.NORMAL, 20);
+        int result = new BattlesController().fight(card1, card2);
+        assert result == 1;
+    }
+
+
+    @Test
+    public void testFight_incorrectCards(){
+        Card card1 = new Card("abcd", "Knight", -32, Element.FIRE, 20);
+        Card card2 = new Card("cdef", "NormalSpell", 31, Element.NORMAL, 20);
+        int result = new BattlesController().fight(card1, card2);
+        assert result == 1;
+    }
+
+
+
+    @Test
     public void testPlay_Player1StrongerthanPlayer2(){
         ArrayList<Card> deck1 = new ArrayList<>();
         deck1.add(new Card("abcd", "Goblin", 2, Element.NORMAL, 10));
@@ -120,4 +139,28 @@ public class BattlesControllerTest {
         String result = new BattlesController().play(p1, p2);
         System.out.println(result);
     }
+
+
+    @Test
+    public void testPlay_P2Wins(){
+        ArrayList<Card> deck1 = new ArrayList<>();
+        deck1.add(new Card("abcd", "Goblin", 2, Element.NORMAL, 10));
+        deck1.add(new Card("abcd", "FireElf", 2, Element.WATER, 10));
+        deck1.add(new Card("abcd", "Dragon", 2, Element.FIRE, 10));
+        deck1.add(new Card("abcd", "Goblin", 2, Element.NORMAL, 10));
+
+        ArrayList<Card> deck2 = new ArrayList<>();
+        deck2.add(new Card("abcd", "Goblin", 2, Element.NORMAL, 100));
+        deck2.add(new Card("abcd", "Knight", 2, Element.NORMAL, 100));
+        deck2.add(new Card("abcd", "WaterSpell", 2, Element.NORMAL, 100));
+        deck2.add(new Card("abcd", "FireSpell", 2, Element.NORMAL, 100));
+
+
+        Player p1 = new Player("p1", deck1);
+        Player p2 = new Player("p2", deck2);
+
+        String result = new BattlesController().play(p1, p2);
+        System.out.println(result);
+    }
+
 }

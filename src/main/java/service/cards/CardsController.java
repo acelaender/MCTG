@@ -83,7 +83,6 @@ public class CardsController extends Controller {
         );
     }
 
-    //TODO old Deck has to be discarded
     public Response setDeck(Request request) {
         UnitOfWork unitOfWork = new UnitOfWork();
 
